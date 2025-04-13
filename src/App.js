@@ -15,20 +15,39 @@ const questionsArray = Object.keys(Questions).map((key) => {
 const QUESTIONS_DB = questionsArray;
 
 function getRandomQuestions(questions, count) {
-  const shuffled = [...questions].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+  let selected = [];
+
+  let readyquestiosn = localStorage.getItem("answered_questios") || [];
+  if (readyquestiosn.length >= questions.length) {
+    localStorage.setItem("answered_questios", []);
+    readyquestiosn = [];
+  }
+  let filtered_questions = questions.filter((item) => {
+    return !readyquestiosn.includes(item.number);
+  });
+  console.log("🚀 ~ filtered_questions:", filtered_questions.length);
+  let total_questions = filtered_questions.length;
+  let max_number_question = Math.min(total_questions, count);
+  for (let index = 0; index < max_number_question; index++) {
+    let find = Math.trunc(filtered_questions.length * Math.random()) - 1;
+    let new_question = filtered_questions.splice(find, 1);
+    selected.push(new_question[0]);
+  }
+
+  return selected;
 }
 
 /**
  * Componente principal de la app.
  */
 function QuizApp() {
-  const [quizQuestions, setQuizQuestions] = useState([]); // Donde guardamos las 30 preguntas aleatorias
-  const [currentIndex, setCurrentIndex] = useState(0); // Índice de la pregunta actual
   const [selectedAnswer, setSelectedAnswer] = useState(null); // Respuesta que el usuario seleccionó
+  const [quizQuestions, setQuizQuestions] = useState([]); // Donde guardamos las 30 preguntas aleatorias
+  const [correctQuestions, setCorrectQuestions] = useState([]); // Donde guardamos las 30 preguntas aleatorias
+  const [currentIndex, setCurrentIndex] = useState(0); // Índice de la pregunta actual
   const [showResult, setShowResult] = useState(false); // Muestra la validación (correcto/incorrecto)
-  const [score, setScore] = useState(0); // Conteo de aciertos
   const [finished, setFinished] = useState(false); // Indica si terminamos la prueba
+  const [score, setScore] = useState(0); // Conteo de aciertos
 
   // Al montar el componente, elegimos 30 preguntas aleatorias.
   useEffect(() => {
@@ -59,6 +78,8 @@ function QuizApp() {
     if (selectedAnswer) {
       if (selectedAnswer === quizQuestions[currentIndex].correct) {
         setScore(score + 1);
+        correctQuestions.push(quizQuestions[currentIndex].number);
+        setCorrectQuestions([...correctQuestions]);
       }
       setShowResult(true);
     }
@@ -71,6 +92,11 @@ function QuizApp() {
    */
   const handleNext = () => {
     if (currentIndex === quizQuestions.length - 1) {
+      let readyquestiosn = localStorage.getItem("answered_questios") || [];
+      localStorage.setItem("answered_questios", [
+        ...readyquestiosn,
+        ...correctQuestions,
+      ]);
       setFinished(true);
     } else {
       setCurrentIndex(currentIndex + 1);
