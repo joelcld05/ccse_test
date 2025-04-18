@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Questions from "./question.json";
-import Answers from "./answers.json";
+import Questions from "./assets/question.json";
+import manual from "./assets/manual_CCSE_2025_1.pdf";
 
-const questionsArray = Object.keys(Questions).map((key) => {
-  const item = Questions[key];
-  return {
-    number: key,
-    question: item.question,
-    answers: item.answers,
-    correct: Answers[key],
-  };
-});
-
-const QUESTIONS_DB = questionsArray;
+const QUESTIONS_DB = Questions;
 
 function getRandomQuestions(questions, count) {
   let selected = [];
@@ -37,9 +27,43 @@ function getRandomQuestions(questions, count) {
   return selected;
 }
 
-/**
- * Componente principal de la app.
- */
+function InCorrectIcon() {
+  return (
+    <svg
+      class="w-6 h-6 text-gray-800 dark:text-white"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="currentColor"
+      viewBox="0 0 24 24">
+      <path
+        fill-rule="evenodd"
+        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  );
+}
+function CorrectIcon() {
+  return (
+    <svg
+      class="w-6 h-6 text-gray-800 dark:text-white"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="currentColor"
+      viewBox="0 0 24 24">
+      <path
+        fill-rule="evenodd"
+        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  );
+}
+
 function QuizApp() {
   const [selectedAnswer, setSelectedAnswer] = useState(null); // Respuesta que el usuario seleccionó
   const [quizQuestions, setQuizQuestions] = useState([]); // Donde guardamos las 30 preguntas aleatorias
@@ -124,19 +148,22 @@ function QuizApp() {
     const percentage = ((score / quizQuestions.length) * 100).toFixed(2);
     return (
       <div style={{ maxWidth: "600px", margin: "0 auto" }} id="app_container">
-        <h1>Resultados</h1>
-        <p>
-          Has conseguido {score} aciertos de {quizQuestions.length} preguntas.
-        </p>
-        <p>
-          <strong>Porcentaje de aciertos:</strong> {percentage}%
-        </p>
-        <button
-          style={{ backgroundColor: "rgb(88, 124, 150)" }}
-          className="validate"
-          onClick={handleRestart}>
-          Volver a realizar la prueba
-        </button>
+        <div class="inline-grid grid-cols-1 gap-4 mt-6 w-full">
+          <h1 className="text-3xl font-bold">Resultados</h1>
+          <p className="text-xl">
+            Has conseguido <strong>{score}</strong> aciertos de{" "}
+            <strong>{quizQuestions.length}</strong> preguntas.
+          </p>
+          <div>
+            <p className="text-xl">Porcentaje de aciertos:</p>
+            <h1 className="text-3xl font-bold"> {percentage}%</h1>
+          </div>
+          <button
+            className="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
+            onClick={handleRestart}>
+            Volver a realizar la prueba
+          </button>
+        </div>
       </div>
     );
   }
@@ -149,83 +176,92 @@ function QuizApp() {
 
   // Pregunta actual
   const currentQuestion = quizQuestions[currentIndex];
+  console.log("🚀 ~ currentQuestion:", currentQuestion);
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto" }} id="app_container">
-      <h1>Prueba CCSE</h1>
-      <p>
-        Pregunta {currentIndex + 1} / {quizQuestions.length}
-      </p>
-      <p style={{ fontSize: "1.5rem" }}>
-        <strong>
-          {currentQuestion.number}: {currentQuestion.question}
-        </strong>
-      </p>
+    <div id="app_container">
+      <div className="md:flex gap-4 w-full">
+        <div style={{ maxWidth: 600 }}>
+          <div className="inline-grid grid-cols-1 gap-4 mt-6 w-full">
+            <h1 className="text-3xl font-bold">Prueba CCSE</h1>
+            <p>
+              Pregunta {currentIndex + 1} de {quizQuestions.length}
+            </p>
+            <p className="text-2xl text-gray-900 dark:text-white">
+              <strong>
+                {currentQuestion.number}: {currentQuestion.question}
+              </strong>
+            </p>
+          </div>
+          <div className="inline-grid grid-cols-1 gap-4 mt-6 w-full">
+            {Object.entries(currentQuestion.answers).map(([key, text]) => {
+              let className =
+                "hover:bg-gray-700 bg-gray-600 dark:bg-gray-800 dark:hover:bg-gray-900";
+              let icon = null;
+              let reference = null;
+              if (showResult) {
+                if (key === currentQuestion.correct) {
+                  className =
+                    "bg-green-600 hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900";
+                  icon = <CorrectIcon />;
+                  reference = currentQuestion.reference
+                    ? currentQuestion.reference
+                    : null;
+                  console.log("🚀 ~ reference:", reference);
+                } else if (
+                  key === selectedAnswer &&
+                  key !== currentQuestion.correct
+                ) {
+                  className =
+                    "bg-red-600 hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900";
+                  icon = <InCorrectIcon />;
+                }
+              } else {
+                if (key === selectedAnswer) {
+                  className =
+                    "bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 dark:border-gray-700";
+                }
+              }
 
-      <div>
-        {Object.entries(currentQuestion.answers).map(([key, text]) => {
-          // Si showResult es true y key === la correcta, la marcamos en verde
-          // Si showResult es true y key === la marcada que no es correcta, la marcamos en rojo
-          let optionStyle = {};
-          if (showResult) {
-            if (key === currentQuestion.correct) {
-              optionStyle = {
-                backgroundColor: "#b7ffb7",
-              }; // verde claro
-            } else if (
-              key === selectedAnswer &&
-              key !== currentQuestion.correct
-            ) {
-              optionStyle = {
-                backgroundColor: "#ffb7b7",
-              }; // rojo claro
-            }
-          }
-
-          return (
-            <button
-              key={key}
-              style={{
-                fontSize: "1.1rem",
-                display: "block",
-                margin: "8px 0",
-                padding: "8px",
-                borderRadius: 5,
-                width: "100%",
-                textAlign: "left",
-                ...(selectedAnswer === key
-                  ? {
-                      border: "2px solid rgb(0, 115, 197)",
-                      backgroundColor: "rgb(163, 196, 219)",
-                    }
-                  : {}),
-                ...optionStyle,
-              }}
-              onClick={() => handleSelectAnswer(key)}
-              disabled={showResult} // no permitir cambios si ya se mostró el resultado
-            >
-              <strong>{key.toUpperCase()}.</strong> {text}
-            </button>
-          );
-        })}
+              return (
+                <button
+                  onClick={() => handleSelectAnswer(key)}
+                  key={key}
+                  type="button"
+                  className={`text-left w-full focus:outline-none text-white text-xl font-medium rounded-lg px-5 py-2.5 me-2 mb-2 ${className}`}>
+                  <div className="flex items-center">
+                    <strong>{key.toUpperCase()}</strong> {`. ${text}`}
+                    {icon}
+                  </div>
+                  {reference && (
+                    <p
+                      className={`text-left w-full text-white text-md rounded-lg px-5 py-2.5 me-2 mb-2`}>
+                      {reference}
+                    </p>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <div className="inline-grid grid-cols-1 gap-4 mt-6 w-full">
+            {!showResult ? (
+              <button
+                className=" w-full text-white bg-yellow-700 hover:bg-yellow-800 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none"
+                onClick={handleValidate}
+                disabled={!selectedAnswer}>
+                VALIDAR
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="  w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none">
+                CONTINUAR
+              </button>
+            )}
+          </div>
+        </div>
+        <iframe src={manual} className="w-full xs:hidden md:min-h-svh" />
       </div>
-
-      {!showResult ? (
-        <button
-          style={{ backgroundColor: "rgb(88, 150, 88)" }}
-          className="validate"
-          onClick={handleValidate}
-          disabled={!selectedAnswer}>
-          VALIDAR
-        </button>
-      ) : (
-        <button
-          onClick={handleNext}
-          className="validate"
-          style={{ backgroundColor: "rgb(88, 124, 150)" }}>
-          CONTINUAR
-        </button>
-      )}
     </div>
   );
 }
