@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Questions from "./assets/question.json";
-import manual from "./assets/manual_CCSE_2025_1.pdf";
+// import manual from "./assets/manual_CCSE_2025_1.pdf";
 
 const QUESTIONS_DB = Questions;
 
@@ -45,6 +45,7 @@ function InCorrectIcon() {
     </svg>
   );
 }
+
 function CorrectIcon() {
   return (
     <svg
@@ -180,7 +181,7 @@ function QuizApp() {
 
   return (
     <div id="app_container">
-      <div className="md:flex gap-4 w-full">
+      <div className="flex gap-4 w-full justify-center">
         <div style={{ maxWidth: 600 }}>
           <div className="inline-grid grid-cols-1 gap-4 mt-6 w-full">
             <h1 className="text-3xl font-bold">Prueba CCSE</h1>
@@ -228,14 +229,14 @@ function QuizApp() {
                   onClick={() => handleSelectAnswer(key)}
                   key={key}
                   type="button"
-                  className={`text-left w-full focus:outline-none text-white text-xl font-medium rounded-lg px-5 py-2.5 me-2 mb-2 ${className}`}>
-                  <div className="flex items-center">
+                  className={`text-left w-full focus:outline-none text-white  font-medium rounded-lg px-5 py-2.5 me-2 mb-2 ${className}`}>
+                  <div className="flex items-center text-xl">
                     <strong>{key.toUpperCase()}</strong> {`. ${text}`}
                     {icon}
                   </div>
                   {reference && (
                     <p
-                      className={`text-left w-full text-white text-md rounded-lg px-5 py-2.5 me-2 mb-2`}>
+                      className={`text-left w-full text-white rounded-lg px-5 py-2.5 me-2 mb-2`}>
                       {reference}
                     </p>
                   )}
@@ -260,7 +261,7 @@ function QuizApp() {
             )}
           </div>
         </div>
-        <iframe src={manual} className="w-full xs:hidden md:min-h-svh" />
+        {/* <iframe src={manual} className="w-full xs:hidden md:min-h-svh" /> */}
       </div>
     </div>
   );
