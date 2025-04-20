@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/ccse_test/static/css/main.a7f274cd.css",
+    "main.js": "/ccse_test/static/js/main.03c4cc58.js",
+    "static/js/453.ed3810f9.chunk.js": "/ccse_test/static/js/453.ed3810f9.chunk.js",
+    "static/media/manual_CCSE_2025_1.pdf": "/ccse_test/static/media/manual_CCSE_2025_1.a53ceadb2863c9f7cd8d.pdf",
+    "index.html": "/ccse_test/index.html",
+    "main.a7f274cd.css.map": "/ccse_test/static/css/main.a7f274cd.css.map",
+    "main.03c4cc58.js.map": "/ccse_test/static/js/main.03c4cc58.js.map",
+    "453.ed3810f9.chunk.js.map": "/ccse_test/static/js/453.ed3810f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a7f274cd.css",
+    "static/js/main.03c4cc58.js"
+  ]
+}
